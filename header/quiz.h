@@ -1,16 +1,16 @@
 #ifndef QUIZ_H_INCLUDED
 #define QUIZ_H_INCLUDED
-#include <string.h>
-
+#include <string>
+using namespace std;
 class User{
 protected:
     char userid[20];
     char pwd[20];
-    char type[10];
+
     char uname[50];
 
 public:
-    void setUserDetails(string,string,string,string);
+    void setUserDetails(string,string,string);
     string getName(string);
     string getUserID();
     int checkUserExists(string);
@@ -28,7 +28,7 @@ public:
 };
 class Admin:public User{
 public:
-    static void createAdmin();
+    static void create_admin(string,string,string);
     void addStudent();
     void removeStudent();
     void viewStudent();
@@ -53,9 +53,14 @@ public:
     int ques_count();
 };
 class StudentPerformance{
-char studid[20];
+char studid[10];
 int marks;
 int tot_marks;
+public:
+    void setMarksDetails(string,int,int);
+    void saveMarksDetails();
+    void  viewDetails(string);
+    void show();
 
 };
 

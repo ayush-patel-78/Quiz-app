@@ -1,7 +1,11 @@
 #ifndef QUIZ_H_INCLUDED
 #define QUIZ_H_INCLUDED
+
 #include <string>
+#include <vector>
+
 using namespace std;
+
 class User{
 protected:
     char userid[20];
@@ -12,6 +16,7 @@ protected:
 public:
     void setUserDetails(string,string,string);
     string getName(string);
+    string getName();
     string getUserID();
     int checkUserExists(string);
     void show();
@@ -63,6 +68,6 @@ public:
     void show();
 
 };
-
+bool ispresent(vector<int>&,int);
 
 #endif // QUIZ_H_INCLUDED

@@ -127,8 +127,10 @@ int main()
                            gotoxy(32,13);
                            cout<<"6. Remove Student";
                            gotoxy(32,14);
-                           cout<<"7. Exit";
-                           gotoxy(32,16);
+                           cout<<"7. Edit Question";
+                           gotoxy(32,15);
+                           cout<<"8. Exit";
+                           gotoxy(32,17);
                            cout<<"Enter Choice:";
                            int choice;
                            textcolor(WHITE);
@@ -158,7 +160,12 @@ int main()
                            case 6:
                                  clrscr();
                                  adminObj.removeStudent();
+                                 break;
                            case 7:
+                                clrscr();
+                                adminObj.editQuestion();
+                                break;
+                           case 8:
                                 clrscr();
                                 break;
                            default:
@@ -171,7 +178,7 @@ int main()
 
 
                            }
-                           if(choice==7)
+                           if(choice==8)
                             break;
 
 

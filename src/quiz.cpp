@@ -1119,3 +1119,500 @@ string User::getName(string id)
     return NULL;
 }
 
+void Admin::editQuestion()
+{
+    Question quesObj;
+    quesObj.edit();
+    clrscr();
+}
+void Question::edit()
+{
+    clrscr();
+    textcolor(LIGHTGREEN);
+    gotoxy(1,1);
+    for(int i=1;i<=80;i++)
+            cout<<"*";
+    gotoxy(1,3);
+    for(int i=1;i<=80;i++)
+            cout<<"*";
+    gotoxy(32,2);
+    textcolor(LIGHTRED);
+    cout<<"QUIZ APP";
+    textcolor(WHITE);
+    gotoxy(25,5);
+    cout<<"***** EDIT QUESTION *****";
+    gotoxy(30,7);
+    textcolor(YELLOW);
+    cout<<"1. Select Question by slide view  ";
+    gotoxy(30,8);
+    cout<<"2. Select Question by ID";
+    gotoxy(30,9);
+    cout<<"3. EXIT";
+    gotoxy(32,11);
+    cout<<"Enter your choice :";
+
+    int choice;
+    gotoxy(53,11);
+    cin>>choice;
+    switch(choice)
+    {
+        case 1:
+              editBySlideView();
+              break;
+        case 2:
+              editByQuestionID();
+              break;
+        case 3:
+              break;
+        default:
+              gotoxy(30,15);
+              textcolor(LIGHTGREEN);
+              cout<<"WRONG CHOICE !!!";
+              getch();
+
+    }
+    return ;
+
+
+
+}
+void Question::editBySlideView()
+{
+    fstream fin("Question.bin",ios::out|ios::in|ios::binary);
+    if(!fin)
+    {
+        clrscr();
+        gotoxy(1,10);
+        textcolor(LIGHTRED);
+        cout<<"No Questions have been added yet!";
+        getch();
+        return;
+    }
+    fin.seekg(0,ios::end);
+    if(fin.tellg()==0)
+    {
+        clrscr();
+        gotoxy(1,10);
+        textcolor(LIGHTRED);
+        cout<<"No Questions present in the file!";
+        getch();
+        return;
+    }
+    clrscr();
+    fin.seekg(0);
+    while(1)
+    {   clrscr();
+        textcolor(LIGHTGREEN);
+        gotoxy(1,1);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(1,3);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(32,2);
+        textcolor(LIGHTRED);
+        cout<<"QUIZ APP";
+        textcolor(WHITE);
+        gotoxy(25,5);
+        cout<<"***** EDIT QUESTION  *****";
+        gotoxy(1,7);
+        textcolor(LIGHTGREEN);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+
+        fin.read((char*)this,sizeof(*this));
+        if(fin.eof())
+        {
+            cout<<endl;
+            textcolor(LIGHTRED);
+            gotoxy(35,10);
+            cout<<"NO MORE QUESTIONS PRESENT!";
+            getch();
+            break;
+        }
+        else
+        {
+            show();
+            cout<<endl<<endl;
+            char editing;
+            textcolor(YELLOW);
+            gotoxy(1,25);
+            cout<<"Do You want to edit ?(Y/N):";
+
+            gotoxy(30,25);
+            cin>>editing;
+            if(editing=='Y'||editing=='y')
+            {
+
+
+                clrscr();
+                textcolor(WHITE);
+                gotoxy(58,4);
+                cout<<"Press 0 to exit/go back";
+
+                textcolor(LIGHTGREEN);
+                gotoxy(1,1);
+                for(int i=1;i<=80;i++)
+                    cout<<"*";
+                gotoxy(1,3);
+                for(int i=1;i<=80;i++)
+                    cout<<"*";
+                gotoxy(32,2);
+                textcolor(LIGHTRED);
+                cout<<"QUIZ APP";
+                textcolor(WHITE);
+                gotoxy(25,5);
+                cout<<"***** EDIT QUESTION DETAILS *****";
+                gotoxy(1,8);
+                textcolor(YELLOW);
+                string str;
+                cout<<"Enter Question:";
+                cin.ignore();
+                textcolor(WHITE);
+                getline(cin,str,'*');
+                if(strcmp(str.c_str(),"0")==0)
+               {
+                    gotoxy(1,24);
+                    textcolor(LIGHTRED);
+                    //gotoxy(5,20);
+                    cout<<"Closing edit question"<<endl;
+                    getch();
+                    fin.close();
+                    return;
+               }
+                strncpy(this->ques,str.c_str(),499);
+                //gotoxy(1,11);
+                textcolor(LIGHTGREEN);
+                cout<<endl<<"Carries marks:";
+                textcolor(YELLOW);
+                cin>>this->tot_marks;
+                // gotoxy(1,13);
+                textcolor(LIGHTGREEN);
+                cout<<endl<<"Options"<<endl<<endl;
+                //       gotoxy(1,15);
+                textcolor(YELLOW);
+                cout<<"(a) ";
+                textcolor(WHITE);
+                cin.ignore();
+                getline(cin,str);
+                strncpy(this->op1,str.c_str(),99);
+                //strcpy(op1,str.c_str());
+                //gotoxy(1,16);
+                textcolor(YELLOW);
+                cout<<"(b) ";
+                textcolor(WHITE);
+                //cin.ignore();
+                getline(cin,str);
+                strncpy(this->op2,str.c_str(),99);
+                //strcpy(op2,str.c_str());
+
+
+                //gotoxy(1,17);
+                textcolor(YELLOW);
+                cout<<"(c) ";
+                textcolor(WHITE);
+                 //cin.ignore();
+                getline(cin,str);
+                strncpy(this->op3,str.c_str(),99);
+                //strcpy(op3,str.c_str());
+                //gotoxy(1,18);
+                textcolor(YELLOW);
+                cout<<"(d) ";
+                textcolor(WHITE);
+                 //cin.ignore();
+                getline(cin,str);
+                strncpy(this->op4,str.c_str(),99);
+                //strcpy(op4,str.c_str());
+                bool valid=false;
+                do
+                {
+                   textcolor(YELLOW);
+                   gotoxy(1,19);
+                   cout<<"Enter correct ans(a/b/c/d):  \b";
+                   //cout<<"\t\b\b\b\b\b";
+                   textcolor(WHITE);
+                   cin>>this->ans;
+
+                   if(this->ans>='a'&&this->ans<='d')
+                    {
+                        valid=true;
+                     /* textcolor(LIGHTRED);
+                      gotoxy(25,22);
+                      cout<<"Invalid option entered! please try again.";
+                      getch();*/
+                    }
+                    else
+                   {
+                    gotoxy(24,22);
+                    textcolor(LIGHTRED);
+                    cout<<"Invalid option entered! please try again.";
+                    getch();
+                    valid=false;
+
+                  }
+                 /*gotoxy(25,22);
+                  cout<<"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+                   getch();*/
+                    }while(valid==false);
+                    fin.seekg(-1*sizeof(*this),ios::cur);
+
+                    fin.write((char *)this,sizeof(*this));
+
+
+                    gotoxy(24,22);
+                    cout<<"\t\t\t\t\t\t\t";
+                    gotoxy(34,22);
+                    textcolor(LIGHTGREEN);
+                    cout<<"Question edited successfully!";
+                    getch();
+                    clrscr();
+
+
+              }
+
+
+        }
+    }
+    fin.close();
+}
+
+
+
+
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+//SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEWSLIDE VIEW SLIDE VIEW SLIDE VIEW SLIDE VIEW
+
+
+void Question::editByQuestionID()
+{
+    clrscr();
+    textcolor(WHITE);
+    gotoxy(58,4);
+    cout<<"Press 0 to exit";
+    textcolor(LIGHTGREEN);
+        gotoxy(1,1);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(1,3);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(32,2);
+        textcolor(LIGHTRED);
+        cout<<"QUIZ APP";
+        textcolor(WHITE);
+        gotoxy(25,5);
+        cout<<"***** EDIT QUESTION DETAILS *****";
+
+        fstream fin("Question.bin",ios::out|ios::in|ios::binary);
+        if(!fin)
+        {
+         gotoxy(35,10);
+         textcolor(LIGHTRED);
+         cout<<"Sorry file cannot be opened!";
+         getch();
+         return;
+        }
+        fin.seekg(0,ios::end);
+        if(fin.tellg()==0)
+        {
+            gotoxy(35,10);
+         textcolor(LIGHTRED);
+         cout<<"No Question Available for Editing!";
+         getch();
+         fin.close();
+         return;
+        }
+        getch();
+        gotoxy(1,8);
+        textcolor(YELLOW);
+        cout<<"Enter Question ID:";
+        bool found=false,valid;
+        int id;
+        //ofstream fout("temp.bin",ios::out|ios::binary|ios::trunc);
+        //if(!fout)
+        //{
+           //gotoxy(35,10);
+         //textcolor(LIGHTRED);
+         //cout<<"Sorry! Editing not possible!";
+         //getch();
+         //fin.close();
+         //return;
+        //}
+        fin.seekg(0);
+        do{
+            valid=true;
+            cin>>id;
+            if(id==0)
+            {
+                fin.close();
+                //fout.close();
+                //remove("temp.bin");
+                return;
+            }
+            if(id<0)
+            {
+                valid=false;
+                 gotoxy(1,24);
+                 textcolor(LIGHTRED);
+                 cout<<"\t\t\t\t\t\t\t\t\rInvalid Question ID";
+                 getch();
+                 gotoxy(19,8);
+                 cout<<"\t\t\t\t\t\t\t";
+                 gotoxy(19,8);
+                 textcolor(WHITE);
+
+
+            }
+            else
+            {
+                while(true)
+                {
+                  fin.read((char*)this,sizeof(*this));
+                  if(fin.eof())
+                        break;
+                  if(this->quesid==id)
+                  {
+                      found=true;
+                        clrscr();
+                        textcolor(WHITE);
+                        gotoxy(58,4);
+                        cout<<"Press 0 to exit/go back";
+
+                        textcolor(LIGHTGREEN);
+                        gotoxy(1,1);
+                        for(int i=1;i<=80;i++)
+                            cout<<"*";
+                        gotoxy(1,3);
+                        for(int i=1;i<=80;i++)
+                            cout<<"*";
+                        gotoxy(32,2);
+                        textcolor(LIGHTRED);
+                        cout<<"QUIZ APP";
+                        textcolor(WHITE);
+                        gotoxy(25,5);
+                        cout<<"***** EDIT QUESTION DETAILS *****";
+                        gotoxy(1,8);
+                        textcolor(YELLOW);
+                        string str;
+                        cout<<"Enter Question:";
+                        cin.ignore();
+                        textcolor(WHITE);
+                         getline(cin,str,'*');
+                         if(strcmp(str.c_str(),"0")==0)
+                        {
+                             gotoxy(1,24);
+                             textcolor(LIGHTRED);
+                             //gotoxy(5,20);
+                             cout<<"Closing edit question"<<endl;
+                             getch();
+                             fin.close();
+                             return;
+                        }
+                         strncpy(this->ques,str.c_str(),499);
+                        //gotoxy(1,11);
+                        textcolor(LIGHTGREEN);
+                        cout<<endl<<"Carries marks:";
+                        textcolor(YELLOW);
+                        cin>>this->tot_marks;
+                        // gotoxy(1,13);
+                        textcolor(LIGHTGREEN);
+                        cout<<endl<<"Options"<<endl<<endl;
+                        //       gotoxy(1,15);
+                        textcolor(YELLOW);
+                        cout<<"(a) ";
+                        textcolor(WHITE);
+                        cin.ignore();
+                        getline(cin,str);
+                        strncpy(this->op1,str.c_str(),99);
+                        //strcpy(op1,str.c_str());
+                        //gotoxy(1,16);
+                        textcolor(YELLOW);
+                        cout<<"(b) ";
+                        textcolor(WHITE);
+                        //cin.ignore();
+                        getline(cin,str);
+                        strncpy(this->op2,str.c_str(),99);
+                        //strcpy(op2,str.c_str());
+
+
+                         //gotoxy(1,17);
+                         textcolor(YELLOW);
+                         cout<<"(c) ";
+                         textcolor(WHITE);
+                          //cin.ignore();
+                         getline(cin,str);
+                         strncpy(this->op3,str.c_str(),99);
+                                 //strcpy(op3,str.c_str());
+                                 //gotoxy(1,18);
+                                 textcolor(YELLOW);
+                        cout<<"(d) ";
+                        textcolor(WHITE);
+                         //cin.ignore();
+                        getline(cin,str);
+                        strncpy(this->op4,str.c_str(),99);
+                        //strcpy(op4,str.c_str());
+                        bool valid=false;
+                        do
+                        {
+                           textcolor(YELLOW);
+                           gotoxy(1,19);
+                           cout<<"Enter correct ans(a/b/c/d):  \b";
+                           //cout<<"\t\b\b\b\b\b";
+                           textcolor(WHITE);
+                           cin>>this->ans;
+
+                           if(this->ans>='a'&&this->ans<='d')
+                           {
+                               valid=true;
+                            /* textcolor(LIGHTRED);
+                             gotoxy(25,22);
+                           cout<<"Invalid option entered! please try again.";
+                           getch();*/
+                          }
+                         else
+                         {
+                            gotoxy(24,22);
+                            textcolor(LIGHTRED);
+                            cout<<"Invalid option entered! please try again.";
+                            getch();
+                            valid=false;
+
+                        }
+                        /*gotoxy(25,22);
+                        cout<<"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+                         getch();*/
+                          }while(valid==false);
+                          fin.seekg(-1*sizeof(*this),ios::cur);
+
+                          fin.write((char *)this,sizeof(*this));
+
+
+                          gotoxy(24,22);
+                         cout<<"\t\t\t\t\t\t\t";
+                         gotoxy(34,22);
+                         textcolor(LIGHTGREEN);
+                         cout<<"Question edited successfully!";
+                         getch();
+
+
+                      continue;
+                  }
+                  else{
+                    //fout.write((char*)this,sizeof(*this));
+                  }
+                }
+                //fout.close();
+                fin.close();
+
+            }
+        }while(valid==false);
+}
+

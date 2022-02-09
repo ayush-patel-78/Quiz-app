@@ -2,8 +2,11 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <vector>
 #include "quiz.h"
-# include "conio2.h";
+# include "conio2.h"
+#include <time.h>
+
 using namespace std;
 
 
@@ -180,6 +183,12 @@ string User::getName()
     string USERNAME(uname);
     return USERNAME;
 }
+string User::getUserID()
+{
+    string USERID;
+    USERID=userid;
+    return USERID;
+}
 void Admin::addQuestion()
 {
     Question quesObj;
@@ -266,29 +275,33 @@ void Question::add()
         cin.ignore();
         getline(cin,str);
         strncpy(op1,str.c_str(),99);
+        //strcpy(op1,str.c_str());
         //gotoxy(1,16);
         textcolor(YELLOW);
         cout<<"(b) ";
         textcolor(WHITE);
-        cin.ignore();
+        //cin.ignore();
         getline(cin,str);
         strncpy(op2,str.c_str(),99);
+        //strcpy(op2,str.c_str());
 
 
         //gotoxy(1,17);
         textcolor(YELLOW);
         cout<<"(c) ";
         textcolor(WHITE);
-         cin.ignore();
+         //cin.ignore();
         getline(cin,str);
         strncpy(op3,str.c_str(),99);
+        //strcpy(op3,str.c_str());
         //gotoxy(1,18);
         textcolor(YELLOW);
         cout<<"(d) ";
         textcolor(WHITE);
-         cin.ignore();
+         //cin.ignore();
         getline(cin,str);
         strncpy(op4,str.c_str(),99);
+        //strcpy(op4,str.c_str());
         bool valid=false;
         do
         {
@@ -415,11 +428,13 @@ void Question::show()
     cout<<"Q."<<quesid<<"  ";
     cout<<ques<<endl;
     cout<<"Carries Marks: "<<tot_marks<<endl;
-    cout<<"a. "<<op1<<endl;
-    cout<<"b. "<<op2<<endl;
-    cout<<"c. "<<op3<<endl;
-    cout<<"d. "<<op4<<endl;
+    cout<<"a.  "<<op1<<endl;
+    cout<<"b.  "<<op2<<endl;
+    cout<<"c.  "<<op3<<endl;
+    cout<<"d.  "<<op4<<endl;
+
     textcolor(LIGHTGREEN);
+
     cout<<endl<<"Correct Option "<<ans;
 }
 
@@ -834,5 +849,273 @@ void Student::Remove()
                 }
 
         }while(valid==false);
+}
+void Student::quiz()
+{
+    Question quesObj;
+    quesObj.startQuiz(userid);
+}
+void Question::startQuiz(string id)
+{
+    ifstream fin("Question.bin",ios::in|ios::binary);
+    if(fin.fail())
+    {
+        gotoxy(28,20);
+        textcolor(LIGHTRED);
+        cout<<"No Questions have Been Added yet!";
+        getch();
+        return;
+    }
+    vector <Question> vecQues;
+    while(1)
+    {
+       fin.read((char*)this,sizeof(*this));
+
+       if(fin.eof())
+            break;
+       vecQues.push_back(*this);
+    }
+    fin.close();
+    vector <int> vecRand;
+    srand((unsigned int)time(NULL));
+    int randno;
+    while(1)
+    {
+        randno=rand()%vecQues.size();
+
+        if(ispresent(vecRand,randno)==true)
+        {
+            continue;
+        }
+        vecRand.push_back(randno);
+        if(vecRand.size()==vecQues.size())
+            break;
+
+    }
+    int count=0;
+    User userObj;
+    int local_marks=0;
+    int local_tot_marks=0;
+    string name=userObj.getName(id);
+    for(int i=0;i<vecQues.size();i++)
+    {
+        int index=vecRand.at(i);
+        *this=vecQues.at(index);
+        clrscr();
+        gotoxy(37,2);
+        textcolor(LIGHTRED);
+        cout<<"QUIZ APP";
+        textcolor(YELLOW);
+        gotoxy(1,3);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(50,5);
+        cout<<name;
+        gotoxy(10,5);
+        cout<<"TOTAL QUESTION: "<<vecQues.size()<<endl;
+        gotoxy(1,6);
+        textcolor(YELLOW);
+        for(int j=1;j<=80;j++)
+            cout<<"*";
+        textcolor(GREEN);
+        gotoxy(1,8);
+        count++;
+        cout<<count<<")";
+        gotoxy(4,8);
+        cout<<this->ques<<endl<<endl;
+        textcolor(LIGHTGRAY);
+        cout<<"a."<<this->op1<<endl<<endl;
+        cout<<"b."<<this->op2<<endl<<endl;
+        cout<<"c."<<this->op3<<endl<<endl;
+        cout<<"d."<<this->op4<<endl<<endl;
+        bool valid;
+        char uans;
+
+        do
+        {
+            textcolor(YELLOW);
+            cout<<"Enter your option(a/b/c/d):  \b";
+            cin>>uans;
+            if(uans>='a'&&uans<='d')
+                valid=true;
+            else
+            {
+                valid=false;
+                gotoxy(24,22);
+                textcolor(LIGHTRED);
+                cout<<"Invalid option entered. Try again";
+                getch();
+                gotoxy(24,22);
+                cout<<"\t\t\t\t\t\t\t\t\t\t\t";
+                gotoxy(1,18);
+
+            }
+        }while(valid==false);
+        local_tot_marks+=this->tot_marks;
+        if(uans==this->ans)
+            local_marks+=this->tot_marks;
+
+    }
+    clrscr();
+    gotoxy(37,2);
+    textcolor(LIGHTRED);
+    cout<<"QUIZ APP";
+    textcolor(YELLOW);
+    gotoxy(1,4);
+    for(int i=1;i<=80;i++)
+        cout<<"*";
+    gotoxy(32,10);
+    textcolor(LIGHTRED);
+    cout<<"** TEST FINISHED **";
+    gotoxy(22,12);
+    cout<<"Press any key to go back to main menu";
+    getch();
+    StudentPerformance sp;
+    sp.setMarksDetails(id,local_marks,local_tot_marks);
+
+
+}
+
+bool ispresent(vector<int>& v,int value)
+{
+    for(int i=0;i<v.size();i++)
+    {
+       if(v.at(i)==value)
+       {
+           return true;
+       }
+    }
+    return false;
+}
+void StudentPerformance::setMarksDetails(string id,int marks, int tot_marks)
+{
+    strcpy(studid,id.c_str());
+    this->marks=marks;
+    this->tot_marks=tot_marks;
+    saveMarksDetails();
+
+}
+void StudentPerformance::saveMarksDetails()
+{
+    ofstream fout("Performance.bin",ios::app|ios::binary);
+    if(!fout)
+    {
+        gotoxy(1,26);
+        textcolor(LIGHTRED);
+        cout<<"Error in creating/opening file";
+        getch();
+        return;
+    }
+    fout.write((char *)this,sizeof(*this));
+    fout.close();
+
+}
+
+void Student::viewPerformance()
+{
+    StudentPerformance sp;
+    sp.show();
+    sp.viewDetails(userid);
+
+}
+void StudentPerformance::viewDetails(string id)
+{
+    Student s;
+    string name;
+    name=s.getName(id);
+    gotoxy(7,8);
+    cout<<name;
+    int row=0;
+    ifstream fin("Performance.bin",ios::in|ios::binary);
+    while(1)
+    {
+        fin.read((char *)this,sizeof(StudentPerformance));
+        if(fin.eof())
+        {
+            gotoxy(1,row+13);
+            textcolor(YELLOW);
+            for(int i=1;i<=80;i++)
+                cout<<"-";
+            gotoxy(30,row+15);
+            textcolor(LIGHTRED);
+            cout<<"NO MORE RECORDS";
+            break;
+        }
+        int result=strcmp(this->studid,id.c_str());
+        if(result==0)
+        {
+            row++;
+            textcolor(YELLOW);
+            gotoxy(1,row+10);
+            cout<<row;
+            gotoxy(25,row+10);
+            cout<<this->marks;
+            gotoxy(55,row+10);
+            cout<<this->tot_marks;
+        }
+
+    }
+    fin.close();
+    getch();
+
+
+}
+void StudentPerformance::show()
+{
+    clrscr();
+    textcolor(WHITE);
+
+    textcolor(LIGHTGREEN);
+        gotoxy(1,1);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(1,3);
+        for(int i=1;i<=80;i++)
+            cout<<"*";
+        gotoxy(32,2);
+        textcolor(LIGHTRED);
+        cout<<"QUIZ APP";
+        textcolor(YELLOW);
+        gotoxy(25,5);
+        cout<<"***** VIEW REPORT CARD *****";
+        gotoxy(1,6);
+        for(int i=1;i<=80;i++)
+            cout<<"-";
+        gotoxy(1,8);
+        cout<<"NAME :";
+        gotoxy(1,10);
+        textcolor(LIGHTGREEN);
+        cout<<"S.NO";
+        gotoxy(25,10);
+        cout<<"MARKS OBTAINED";
+        gotoxy(55,10);
+        cout<<"TOTAL MARKS";
+
+
+
+
+
+}
+
+string User::getName(string id)
+{
+    ifstream fin("Student.bin",ios::in|ios::binary);
+    while(1)
+    {
+        fin.read((char *)this,sizeof(User));
+        if(fin.eof())
+        {
+            cout<<"NO match of record found";
+            break;
+        }
+        int result=strcmp(this->getUserID().c_str(),id.c_str());
+        if(result==0)
+        {
+            return this->uname;
+        }
+
+    }
+    fin.close();
+    return NULL;
 }
 

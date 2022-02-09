@@ -40,6 +40,7 @@ public:
     void addQuestion();
     void removeQuestion();
     void viewQuestion();
+    void editQuestion();
 
 };
 
@@ -56,6 +57,9 @@ public:
     void viewQuestion();
     void startQuiz(string);
     int ques_count();
+    void edit();
+    void editBySlideView();
+    void editByQuestionID();
 };
 class StudentPerformance{
 char studid[10];
